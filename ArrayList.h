@@ -1,80 +1,65 @@
-//
-// Created by rames on 9/15/2026.
-//
-
 # pragma once
 
 # include <iostream>
-using namespace std;
+# include "List.h"
 
 template <typename T> // during runtime, map it to whatever data type is being used into a main program
-class ArrayList {
-    public:
-        ArrayList():size(0) {
+class ArrayList : public List<T> {
 
-        }
-        void addFront(T item) { // big O is n
-            // tackle any issue before you write data[size++] = item;
-            if (size>=CAPACITY) {
-                cout<<"Array is full"<<endl;
-                return;
-            }
-            for (int i = size ; i>0 ; i--) { //starting from size going down to 0
-                data[i] = data[i-1];
-            }
-            data[0] = item;
-            size++;
-        }
-
-    void addBack(T item) { // big O is 1
-        if (size>=CAPACITY) {
-            cout<<"Array is full"<<endl;
+ public:
+    void addFront(T* value) override {
+        if (size_ >= CAPACITY) {
+            std::cout << "ArrayList is full." << std::endl;
             return;
         }
-            data[size] = item;
-            size++;
+
+        for (int i = size_; i > 0; --i) {
+            data_[i] = data_[i - 1];
         }
 
-    void deleteFront() { // big O is n
-            if (size==0) {
-                cout<<"Array is empty"<<endl;
-                return;
-            }
-            for (int i = 0; i < size-1; i++) {
-                data[i] = data[i+1];
-            }
-            size--;
+        data_[0] = value;
+        ++size_;
+    }
+
+    void deleteFront() override {
+        if (size_ == 0) {
+            std::cout << "ArrayList is empty." << std::endl;
+            return;
         }
 
-    void deleteBack() { // big O is 1
-            if (size==0) {
-                cout<<"Array is empty"<<endl;
-                return;
-            }
-            size--;
+        delete data_[0];
+
+        for (int i = 0; i < size_ - 1; ++i) {
+            data_[i] = data_[i + 1];
         }
 
-    bool search(T item) { // big O is n
-            if (size==0) {
-                cout<<"Array is empty"<<endl;
-                return false;
-            }
-            for (int i = 0; i < size; i++) {
-                if (data[i] == item)
-                return true;
-            }
-            return false;
+        --size_;
+    }
+
+    bool search(T* value) const override {
+        for (int i = 0; i < size_; ++i) {
+            if (*data_[i] == *value) return true;
         }
 
-    void printArray() {
-            for (int i = 0; i < size; i++) {
-                cout<<data[i]<<",";
-            }
-            cout<<endl;
+        return false;
+    }
+
+    void print() const override {
+        for (int i = 0; i < size_; ++i) {
+            std::cout << *data_[i] << ",";
         }
 
-    private:
-        static const int CAPACITY = 15;
-        T data[CAPACITY];
-        int size;
+        std::cout << std::endl;
+    }
+
+    ~ArrayList() override {
+        for (int i = 0; i < size_; ++i) {
+            delete data_[i];
+        }
+    }
+
+private:
+    static const int CAPACITY = 20;
+    T* data_[CAPACITY];
+    int size_;
 };
